@@ -1,0 +1,61 @@
+{
+  "name": "thesis-final-product",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@react-three/drei": "9.50",
+    "@react-three/fiber": "8.9",
+    "@react-three/xr": "^5.2.0",
+    "aframe": "^1.5.0",
+    "annyang": "^2.6.1",
+    "artyom.js": "^1.0.6",
+    "axios": "^1.6.5",
+    "cra-template": "1.2.0",
+    "dayjs": "^1.11.10",
+    "handtrackjs": "^0.1.5",
+    "jotai": "^2.6.2",
+    "leva": "^0.9.34",
+    "ngrok": "^5.0.0-beta.2",
+    "number-to-words": "^1.2.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.0.1",
+    "react-lottie": "^1.2.4",
+    "react-router-dom": "^6.8.1",
+    "react-scripts": "5.0.1",
+    "react-sketch-canvas": "^6.2.0",
+    "react-speech-recognition": "^3.10.0",
+    "react-three-fiber": "^6.0.13",
+    "tesseract.js": "^5.0.4",
+    "three": "^0.160.0",
+    "three-gltf-loader": "^1.111.0",
+    "vercel": "^28.16.12"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
