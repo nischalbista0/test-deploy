@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaBookReader } from "react-icons/fa";
+import { FaBookReader, FaUser } from "react-icons/fa";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { MdLeaderboard, MdShop } from "react-icons/md";
 import { PiHandsClapping } from "react-icons/pi";
@@ -105,6 +105,26 @@ const Sidebar = () => {
               <p className="hidden font-semibold md:block">Achievements</p>
 
               {activeTab === "achievements" && (
+                <div className="md:bg-blue-500 h-full w-[2px] absolute left-0"></div>
+              )}
+            </li>
+
+            <li
+              className={`relative hover:text-purple-lighter cursor-pointer transition duration-200 ease-linear md:text-white md:flex md:items-center md:gap-3 md:w-full md:px-4 md:py-2.5 md:rounded-md md:hover:bg-dark-bg md:hidden ${
+                activeTab === "profile"
+                  ? "text-blue-500 md:text-blue-500"
+                  : "text-white"
+              }`}
+              onClick={() => {
+                navigate("/profile");
+                setActiveTab("profile");
+                localStorage.setItem("activeTab", "profile");
+              }}
+            >
+              <FaUser className="w-4 h-4" />
+              <p className="hidden font-semibold md:block">Profile</p>
+
+              {activeTab === "profile" && (
                 <div className="md:bg-blue-500 h-full w-[2px] absolute left-0"></div>
               )}
             </li>

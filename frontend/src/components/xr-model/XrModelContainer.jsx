@@ -19,9 +19,8 @@ const XrCubeContainer = () => {
         <XR>
           <OrbitControls />
           <ambientLight />
-          <mesh ref={modelRef} position-z={-5}>
-            <Model value={id} />
-          </mesh>
+
+          <Model ref={modelRef} value={id} />
         </XR>
       </Canvas>
     </>
