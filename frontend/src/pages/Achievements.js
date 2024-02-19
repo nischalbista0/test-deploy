@@ -10,12 +10,12 @@ const Achievements = () => {
   ];
 
   return (
-    <div className="p-6 w-full">
+    <div className="p-6 w-full mb-20 md:mb-0">
       <div className="w-full">
         <h1 className="text-4xl font-bold text-purple-800 mb-6">Achievements</h1>
 
         <div className="mb-8">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-6">
             {badgeItems.map((badge) => (
               <div
                 key={badge.id}

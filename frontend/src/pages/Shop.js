@@ -128,7 +128,7 @@ const Shop = () => {
   }, [userPoints]);
 
   return (
-    <div className="p-6 w-full">
+    <div className="p-6 w-full mb-20 md:mb-0">
       <div className="w-full">
         <h1 className="text-4xl font-bold text-purple-800 mb-6">Unlock Characters & Avatars with points</h1>
 
@@ -228,7 +228,7 @@ const Shop = () => {
 
         <div className="mt-8 text-center">
           <p className="text-gray-600">
-            Unlock characters and avatars to enhance your gaming experience!
+            Unlock characters and avatars to enhance your learning experience!
           </p>
           <Link to="/learn">
             <button className="bg-purple-500 text-white px-4 py-2 mt-4 rounded-md">
