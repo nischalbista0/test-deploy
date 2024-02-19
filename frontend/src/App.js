@@ -10,6 +10,8 @@ import NotFound from "./pages/NotFound";
 import NumberLesson from "./pages/NumberLesson";
 import Signup from "./pages/Signup";
 import XrModelContainer from "./components/xr-model/XrModelContainer";
+import XrGalleryContainer from "./components/xr-gallery/XrGalleryContainer";
+import "./App.css";
 
 const App = () => {
   return (
@@ -23,6 +25,7 @@ const App = () => {
         <Route path="/learn/numbers/:id" element={<NumberLesson />} />
         <Route path="/learn/:id/view-ar" element={<XrModelContainer />} />
         <Route path="/profile" element={<ProfileBody />} />
+        <Route path="/xr-characters" element={<XrGalleryContainer />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

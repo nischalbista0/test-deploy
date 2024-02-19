@@ -198,8 +198,8 @@ const NumberLesson = () => {
   }, [result]);
 
   return (
-    <div className="pr-14 w-full h-screen">
-      <div className="flex items-center gap-8 h-screen">
+    <div className="pr-14 pb-10 md:pb-0 w-full min-h-screen bg-white">
+      <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 h-screen">
         {!drawingEnabled ? (
           <Canvas style={{ width: "100%" }}>
             <CameraControls />
@@ -208,7 +208,7 @@ const NumberLesson = () => {
             </Suspense>
           </Canvas>
         ) : (
-          <div className="w-full flex flex-col gap-4 justify-center items-center">
+          <div className="w-full flex flex-col gap-4 justify-center items-center md:border-none border-b py-4 border-gray-400">
             <div className="w-[300px] flex flex-col gap-2">
               <DrawingCanvas onDrawingFinish={onDrawingFinish} />
 

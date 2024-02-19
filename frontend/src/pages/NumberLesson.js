@@ -227,7 +227,7 @@ const NumberLesson = () => {
   }, [result]);
 
   return (
-    <div className="pr-14 w-full h-screen">
+    <div className="pr-14 w-full h-screen bg-white">
       <div className="flex items-center gap-8 h-screen">
         <Canvas style={{ width: "100%" }}>
           <CameraControls />

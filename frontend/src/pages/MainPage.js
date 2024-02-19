@@ -40,7 +40,7 @@ const MainPage = () => {
   }, []);
 
   return (
-    <div className="">
+    <div className="bg-white">
       <Sidebar />
 
       <div className="md:ml-[280px]">

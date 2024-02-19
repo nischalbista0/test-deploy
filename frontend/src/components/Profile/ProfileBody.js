@@ -51,7 +51,7 @@ const ProfileBody = () => {
     ) : null;
 
   return (
-    <div className="w-full flex mb-16 md:mb-0">
+    <div className="w-full flex mb-16 md:mb-0 bg-white">
       <Sidebar />
 
       <div className="md:ml-[280px] min-h-screen flex-1">
