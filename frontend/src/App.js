@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProfileBody from "./components/Profile/ProfileBody";
-import XrHitModelContainer from "./components/xr-hit-model/XrHitModelContainer";
+import XrCubeContainer from "./components/xr-cube/XrCubeContainer";
 import AlphabetLesson from "./pages/AlphabetLesson";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
@@ -20,7 +20,7 @@ const App = () => {
         <Route path="/*" element={<MainPage />} />
         <Route path="/learn/alphabets/:id" element={<AlphabetLesson />} />
         <Route path="/learn/numbers/:id" element={<NumberLesson />} />
-        <Route path="/learn/:id/view-ar" element={<XrHitModelContainer />} />
+        <Route path="/learn/:id/view-ar" element={<XrCubeContainer />} />
         <Route path="/profile" element={<ProfileBody />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
