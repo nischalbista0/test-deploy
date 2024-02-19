@@ -1,11 +1,10 @@
 import { Canvas } from "@react-three/fiber";
 import { ARButton, XR } from "@react-three/xr";
 import { useParams } from "react-router-dom";
-import Model from "./Model";
+import Model from "../xr-hit-model/Model";
 
 const XrCubeContainer = () => {
   const { id } = useParams();
-  
   return (
     <>
       <ARButton />

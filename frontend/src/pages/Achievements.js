@@ -10,7 +10,7 @@ const Achievements = () => {
   ];
 
   return (
-    <div className="p-6 w-full mb-20 md:mb-0">
+    <div className="p-6 w-full pb-20 md:pb-6 min-h-screen">
       <div className="w-full">
         <h1 className="text-4xl font-bold text-purple-800 mb-6">Achievements</h1>
 

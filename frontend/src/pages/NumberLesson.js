@@ -227,17 +227,17 @@ const NumberLesson = () => {
   }, [result]);
 
   return (
-    <div className="pr-14 w-full h-screen bg-white">
-      <div className="flex items-center gap-8 h-screen">
-        <Canvas style={{ width: "100%" }}>
-          <CameraControls />
-          <Suspense fallback={null}>
-            <Model value={id} />
-          </Suspense>
-        </Canvas>
-
-        {drawingEnabled && (
-          <div className="w-full flex flex-col gap-4 justify-center items-center">
+    <div className="md:pr-14 pb-10 md:pb-0 w-full min-h-screen bg-white">
+      <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 h-screen">
+      {!drawingEnabled ? (
+          <Canvas style={{ width: "100%" }}>
+            <CameraControls />
+            <Suspense fallback={null}>
+              <Model value={id} />
+            </Suspense>
+          </Canvas>
+        ) : (
+          <div className="w-full flex flex-col gap-4 justify-center items-center md:border-none border-b py-4 border-gray-400">
             <div className="w-[300px] flex flex-col gap-2">
               <DrawingCanvas onDrawingFinish={onDrawingFinish} />
 
@@ -253,7 +253,7 @@ const NumberLesson = () => {
           </div>
         )}
 
-        <div className="flex flex-col gap-4 min-w-[300px]">
+        <div className="flex flex-col gap-4 min-w-[350px]">
           <button
             className="bg-[#58cc02] rounded-xl py-2 px-4 text-white font-bold hover:bg-[#4BAC00] transition duration-300 flex items-center justify-center"
             onClick={() => {

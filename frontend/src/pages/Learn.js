@@ -11,7 +11,7 @@ const Learn = () => {
   );
 
   return (
-    <div className="py-6 px-6 md:py-8 md:px-14 w-full flex justify-center pb-20 md:pb-0">
+    <div className="py-6 px-6 md:py-8 md:px-14 w-full flex justify-center pb-20 md:pb-8">
       <div className="w-full flex flex-col gap-10">
         <div>
           <div className="flex bg-[#58cc02] rounded-xl px-6 py-3 flex-col gap-1.5 text-white">
