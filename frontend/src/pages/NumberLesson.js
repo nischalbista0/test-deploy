@@ -25,21 +25,28 @@ const CameraControls = () => {
 const Model = ({ value }) => {
   let modelFilePath;
 
-  const numberWords = [
-    "zero",
-    "one",
-    "two",
-    "three",
-    "four",
-    "five",
-    "six",
-    "seven",
-    "eight",
-    "nine",
-  ];
-  const numberWord = numberWords[value];
+  // Determine whether the value is a number or an alphabet
+  if (!isNaN(value) && value >= 0 && value <= 9) {
+    // It's a number, convert it to the word representation
+    const numberWords = [
+      "zero",
+      "one",
+      "two",
+      "three",
+      "four",
+      "five",
+      "six",
+      "seven",
+      "eight",
+      "nine",
+    ];
+    const numberWord = numberWords[value];
 
-  modelFilePath = `/models/numbers/${numberWord}.gltf`;
+    modelFilePath = `/models/numbers/${numberWord}.gltf`;
+  } else {
+    // It's an alphabet
+    modelFilePath = `/models/alphabets/Letter_${value.toUpperCase()}.gltf`;
+  }
 
   const { nodes, materials } = useGLTF(modelFilePath);
   const groupRef = useRef();
@@ -57,7 +64,7 @@ const Model = ({ value }) => {
 
   return (
     <group ref={groupRef} dispose={null}>
-      <group scale={0.1} position={[0, positionY, -2]}>
+      <group scale={0.1} position={[-1, positionY, -2]}>
         <primitive object={nodes.ascii} materials={materials} ref={modelRef} />
       </group>
     </group>
