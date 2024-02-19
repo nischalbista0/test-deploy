@@ -44,7 +44,7 @@ export default function Model(props) {
   }
 
   return (
-    <group ref={group} {...props} daispose={null}>
+    <group ref={group} {...props} dispose={null}>
       <group scale={0.1} position={[0, 2, -5]}>
         <primitive object={nodes.ascii} materials={materials} />
       </group>
