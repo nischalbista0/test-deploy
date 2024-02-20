@@ -1,21 +1,29 @@
+import { useAtom } from "jotai";
 import React from "react";
 import { FaCrown } from "react-icons/fa";
+import { currentUserAtom } from "./MainPage";
 
 const Leaderboard = () => {
+  const [currentUser] = useAtom(currentUserAtom);
   // Dummy leaderboard data (replace it with actual data from your backend)
   const leaderboardData = [
-    { rank: 1, username: "Nischal", score: 300 },
+    { rank: 1, username: "Nischal", score: currentUser?.data[0]?.points },
     { rank: 2, username: "Suprem", score: 250 },
     { rank: 3, username: "Susmita", score: 200 },
     // Add more entries as needed
   ];
 
   return (
-    <div className="p-6 w-full pb-20 pd:mb-0 min-h-screen">
+    <div className="p-6 w-full">
       <div className="w-full">
         <h1 className="text-4xl font-bold text-purple-800 mb-6">
           🏆 Leaderboard
         </h1>
+
+        <p className="text-gray-600 mb-6">
+          Here are the top learners on the leaderboard. Keep playing and earn
+          more points to climb to the top of the leaderboard!
+        </p>
 
         <div className="overflow-x-auto">
           <table className="w-full table-auto">

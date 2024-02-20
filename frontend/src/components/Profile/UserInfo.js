@@ -63,6 +63,10 @@ const UserInfo = () => {
     // Clear the user authentication token from local storage
     localStorage.removeItem("token");
 
+    localStorage.removeItem("unlockedCharacters");
+
+    localStorage.removeItem("selectedAvatar");
+
     // Navigate the user to the login page
     window.location.href = "/signin";
   };

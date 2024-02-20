@@ -1,6 +1,7 @@
 import { useGLTF } from "@react-three/drei";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
 import annyang from "annyang";
+import axios from "axios";
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { AiFillSound } from "react-icons/ai";
 import { FaMicrophoneAlt } from "react-icons/fa";
@@ -10,6 +11,10 @@ import { useParams } from "react-router-dom";
 import Tesseract from "tesseract.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import DrawingCanvas from "../components/DrawingCanvas";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { currentUserAtom } from "./MainPage";
+import { useAtom } from "jotai";
 
 // Extend the controls
 extend({ OrbitControls });
@@ -79,6 +84,57 @@ const NumberLesson = () => {
   const [drawingEnabled, setDrawingEnabled] = useState(false);
   const [sketchImage, setSketchImage] = useState("");
   const expectedAlphabet = id;
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+
+  // Function to add points to the user
+  const addPointsToUser = async (pointsToAdd) => {
+    console.log("Adding points to user:", pointsToAdd);
+    try {
+      const formData = {
+        points: pointsToAdd,
+      };
+
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        "http://localhost:3001/users/add-points",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const getUser = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (token) {
+            // If token exists, fetch the user data
+            const response = await axios.get("http://localhost:3001/users", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const user = response.data;
+            setCurrentUser(user);
+          } else {
+            // If token doesn't exist, set user state to null
+            setCurrentUser(null);
+          }
+        } catch (error) {
+          console.log(error);
+          setCurrentUser(null);
+        }
+      };
+
+      getUser();
+
+      
+      setResult("Correct!");
+    } catch (error) {
+      console.error("Error adding points:", error);
+    }
+  };
 
   const onDrawingFinish = (data) => {
     // Set the base64 data URL to the state
@@ -110,8 +166,11 @@ const NumberLesson = () => {
 
         if (normalizedOCRResult === normalizedExpectedNumber) {
           setResult("Correct!");
+          addPointsToUser(100);
+          setSketchImage("")
         } else {
           setResult("Incorrect!");
+          setSketchImage("")
         }
       })
       .catch((error) => {
@@ -152,6 +211,16 @@ const NumberLesson = () => {
       setIsListening(false);
       annyang.abort();
     } else {
+      const spokenRepresentationWithPause = "Speak the letter two times.";
+
+      const utterance = new SpeechSynthesisUtterance(
+        spokenRepresentationWithPause
+      );
+      var voices = window.speechSynthesis.getVoices();
+      utterance.voice = voices[5];
+
+        window.speechSynthesis.speak(utterance);
+
       setIsListening(true);
       startAnnyang();
     }
@@ -176,6 +245,7 @@ const NumberLesson = () => {
         `${normalizedExpectedAlphabet}${normalizedExpectedAlphabet}${normalizedExpectedAlphabet}`
     ) {
       setResult("Correct!");
+      addPointsToUser(100);
     } else {
       setResult("Incorrect!");
     }
@@ -198,7 +268,17 @@ const NumberLesson = () => {
   }, [result]);
 
   return (
-    <div className="md:pr-14 pb-10 md:pb-0 w-full min-h-screen bg-white">
+    <div className="relative md:pr-14 pb-10 md:pb-0 w-full min-h-screen bg-white">
+    {/* show points at top right with nice design */}
+    <div className="fixed top-4 right-4">
+      <div className="bg-[#FFD700] text-[#4A90E2] rounded-xl py-2 px-4 font-bold flex items-center gap-2">
+        <span>Points: </span>
+        <span>
+          {currentUser?.data[0]?.points}
+        </span>
+      </div>
+    </div>
+
       <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 h-screen">
         {!drawingEnabled ? (
           <Canvas style={{ width: "100%" }}>
@@ -263,9 +343,9 @@ const NumberLesson = () => {
           >
             <TbAugmentedReality className="mr-2 text-xl" /> View
           </button>
-          <div>
+          {/* <div>
             Recognized Word: <strong>{recognizedWord}</strong>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -290,6 +370,18 @@ const NumberLesson = () => {
           />
         </div>
       )}
+
+      <ToastContainer 
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+       />
     </div>
   );
 };

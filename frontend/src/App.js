@@ -1,7 +1,9 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
 import ProfileBody from "./components/Profile/ProfileBody";
-import XrCubeContainer from "./components/xr-model/XrModelContainer";
+import XrGalleryContainer from "./components/xr-gallery/XrGalleryContainer";
+import XrModelContainer from "./components/xr-model/XrModelContainer";
 import AlphabetLesson from "./pages/AlphabetLesson";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
@@ -9,9 +11,6 @@ import MainPage from "./pages/MainPage";
 import NotFound from "./pages/NotFound";
 import NumberLesson from "./pages/NumberLesson";
 import Signup from "./pages/Signup";
-import XrModelContainer from "./components/xr-model/XrModelContainer";
-import XrGalleryContainer from "./components/xr-gallery/XrGalleryContainer";
-import "./App.css";
 
 const App = () => {
   return (

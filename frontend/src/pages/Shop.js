@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FaLock } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { currentUserAtom } from "./MainPage";
+import { useAtom } from "jotai";
+import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Shop = () => {
-
   const initialAvatarItems = [
     {
       id: 4,
@@ -32,7 +36,6 @@ const Shop = () => {
     // Add more avatars as needed
   ];
 
-
   const [avatarItems, setAvatarItems] = useState(
     initialAvatarItems.map((item) => {
       const unlockedItem = JSON.parse(
@@ -40,15 +43,6 @@ const Shop = () => {
       );
       return unlockedItem ? { ...item, unlocked: true } : item;
     })
-  );
-
-  const [selectedCharacter, setSelectedCharacter] = useState(
-    JSON.parse(localStorage.getItem("selectedCharacter")) || {
-      id: null,
-      name: null,
-      cost: null,
-      unlocked: null,
-    }
   );
 
   const [selectedAvatar, setSelectedAvatar] = useState(
@@ -61,49 +55,71 @@ const Shop = () => {
     }
   );
 
-  const [userPoints, setUserPoints] = useState(
-    // JSON.parse(localStorage.getItem("userPoints")) || 150
-    500
-  );
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const selectItem = (item) => {
-    if (item.type === "character") {
-      setSelectedCharacter(item);
-      localStorage.setItem("selectedCharacter", JSON.stringify(item));
-    } else if (item.type === "avatar") {
-      setSelectedAvatar(item);
-      localStorage.setItem("selectedAvatar", JSON.stringify(item));
-    }
+    setSelectedAvatar(item);
+    localStorage.setItem("selectedAvatar", JSON.stringify(item));
 
     if (!item.unlocked) {
       setIsModalOpen(true);
     }
   };
 
+  const subtractPointsToUser = async (pointsToUse) => {
+    console.log("Adding points to user:", pointsToUse);
+    try {
+      const formData = {
+        points: pointsToUse,
+      };
+
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        "http://localhost:3001/users/subtract-points",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const getUser = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (token) {
+            // If token exists, fetch the user data
+            const response = await axios.get("http://localhost:3001/users", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const user = response.data;
+            setCurrentUser(user);
+          } else {
+            // If token doesn't exist, set user state to null
+            setCurrentUser(null);
+          }
+        } catch (error) {
+          console.log(error);
+          setCurrentUser(null);
+        }
+      };
+
+      getUser();
+    } catch (error) {
+      console.error("Error adding points:", error);
+    }
+  };
+
   const handleUnlock = () => {
-    const selectedItem = selectedCharacter || selectedAvatar;
+    const selectedItem = selectedAvatar;
 
-    if (userPoints >= selectedItem.cost) {
-      setUserPoints((prevPoints) => prevPoints - selectedItem.cost);
+    if (currentUser?.data[0]?.points >= selectedItem.cost) {
+      subtractPointsToUser(selectedItem.cost);
 
-      if (selectedCharacter) {
-        setSelectedCharacter({
-          id: null,
-          name: null,
-          cost: null,
-          unlocked: true, // set to true when unlocked
-        });
-        localStorage.setItem(
-          "selectedCharacter",
-          JSON.stringify({ ...selectedCharacter, unlocked: true })
-        );
-        localStorage.setItem(
-          `character_${selectedCharacter.id}`,
-          JSON.stringify({ ...selectedCharacter, unlocked: true })
-        );
-      } else if (selectedAvatar) {
         setSelectedAvatar((prevAvatar) => ({
           ...prevAvatar,
           unlocked: true,
@@ -125,43 +141,43 @@ const Shop = () => {
         );
       }
 
-      setIsModalOpen(false);
-    }
-  };
+      toast.success('Avatar unlocked successfully!');
 
-  useEffect(() => {
-    localStorage.setItem("userPoints", JSON.stringify(userPoints));
-  }, [userPoints]);
+      setIsModalOpen(false);
+
+      // reload the page
+      window.location.reload();
+    }
 
   return (
     <div className="p-6 w-full pb-20 md:pb-0 min-h-screen">
       <div className="w-full">
-        <h1 className="text-4xl font-bold text-purple-800 mb-6">
+        <h1 className="text-3xl md:text-4xl font-bold text-purple-800 mb-6">
           Unlock Characters & Avatars with points
         </h1>
 
         <div className="flex justify-between items-center mb-4">
-          <p className="text-xl font-semibold">Points: {userPoints}</p>
+          <p className="text-xl font-semibold">Points: {currentUser?.data[0]?.points}</p>
         </div>
 
         <div className="mb-8 flex flex-col gap-2">
           <h2 className="text-2xl font-semibold">Characters</h2>
-          
+
           <p className="text-gray-600">
-            Characters are unlocked from the points that you gain as you progress through the learning
-            experience.
+            Characters are unlocked from the points that you gain as you
+            progress through the learning experience.
           </p>
-          
+
           <Link to="/xr-characters">
             <button className="bg-purple-500 text-white px-4 py-2 rounded-md">
-              View Characters 👀 
+              View Characters 👀
             </button>
           </Link>
         </div>
 
         <div className="relative flex flex-col gap-2">
           <h2 className="text-2xl font-semibold">Avatars</h2>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {avatarItems
               .filter((item) => item.type === "avatar")
               .map((item) => (
@@ -199,7 +215,7 @@ const Shop = () => {
           </div>
         </div>
 
-        <div className="mt-8">
+        {/* <div className="mt-8">
           <p className="text-xl font-semibold mb-2">Selected Item:</p>
           {selectedCharacter || selectedAvatar ? (
             <div>
@@ -209,7 +225,7 @@ const Shop = () => {
           ) : (
             <p>No item selected</p>
           )}
-        </div>
+        </div> */}
 
         <div className="mt-8 text-center">
           <p className="text-gray-600">
@@ -227,11 +243,11 @@ const Shop = () => {
           <div className="bg-[#000000a1] z-40 w-screen h-screen fixed top-0 left-0 flex items-center justify-center">
             <div className="bg-white p-8 rounded-md">
               <p className="text-xl font-semibold mb-4">
-                Unlock {selectedCharacter?.name || selectedAvatar?.name}
+                Unlock {selectedAvatar?.name}
               </p>
               <p className="mb-4">Are you sure you want to unlock this item?</p>
               <p className="mb-4">
-                You will lose {selectedCharacter?.cost || selectedAvatar?.cost}{" "}
+                You will lose { selectedAvatar?.cost}{" "}
                 points.
               </p>
               <button
@@ -250,6 +266,8 @@ const Shop = () => {
           </div>
         )}
       </div>
+
+      <ToastContainer />
     </div>
   );
 };

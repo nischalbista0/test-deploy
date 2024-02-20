@@ -1,15 +1,20 @@
 import { useGLTF } from "@react-three/drei";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
 import annyang from "annyang";
+import axios from "axios";
+import { useAtom } from "jotai";
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { AiFillSound } from "react-icons/ai";
 import { FaMicrophoneAlt } from "react-icons/fa";
 import { MdOutlineDraw } from "react-icons/md";
 import { TbAugmentedReality } from "react-icons/tb";
 import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Tesseract from "tesseract.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import DrawingCanvas from "../components/DrawingCanvas";
+import { currentUserAtom } from "./MainPage";
 
 // Extend the controls
 extend({ OrbitControls });
@@ -79,6 +84,57 @@ const NumberLesson = () => {
   const [drawingEnabled, setDrawingEnabled] = useState(false);
   const [sketchImage, setSketchImage] = useState("");
   const expectedNumber = id;
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+
+  // Function to add points to the user
+  const addPointsToUser = async (pointsToAdd) => {
+    console.log("Adding points to user:", pointsToAdd);
+    try {
+      const formData = {
+        points: pointsToAdd,
+      };
+
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        "http://localhost:3001/users/add-points",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const getUser = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (token) {
+            // If token exists, fetch the user data
+            const response = await axios.get("http://localhost:3001/users", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const user = response.data;
+            setCurrentUser(user);
+          } else {
+            // If token doesn't exist, set user state to null
+            setCurrentUser(null);
+          }
+        } catch (error) {
+          console.log(error);
+          setCurrentUser(null);
+        }
+      };
+
+      getUser();
+
+      toast.success("You got 100 points! 🤩");
+      setResult("Correct!");
+    } catch (error) {
+      console.error("Error adding points:", error);
+    }
+  };
 
   const onDrawingFinish = (data) => {
     // Set the base64 data URL to the state
@@ -110,8 +166,11 @@ const NumberLesson = () => {
 
         if (normalizedOCRResult === normalizedExpectedNumber) {
           setResult("Correct!");
+          addPointsToUser(100);
+          setSketchImage("");
         } else {
           setResult("Incorrect!");
+          setSketchImage("");
         }
       })
       .catch((error) => {
@@ -174,6 +233,19 @@ const NumberLesson = () => {
       setIsListening(false);
       annyang.abort();
     } else {
+      // const spokenRepresentationWithPause = `Repeat what you heard ...`;
+
+      // const utterance = new SpeechSynthesisUtterance(
+      //   spokenRepresentationWithPause
+      // );
+      // var voices = window.speechSynthesis.getVoices();
+      // utterance.voice = voices[5];
+
+      // // if voice is 5 then speak
+      // if (utterance.voice === voices[5]) {
+      //   window.speechSynthesis.speak(utterance);
+      // }
+
       setIsListening(true);
       startAnnyang();
     }
@@ -183,35 +255,40 @@ const NumberLesson = () => {
     console.log("Spoken Input:", prevSpokenInput);
 
     // Convert spoken words to numbers
-    const spokenWordsToNumbers = {
-      one: "1",
-      two: "2",
-      three: "3",
-      four: "4",
-      five: "5",
-      six: "6",
-      seven: "7",
-      eight: "8",
-      nine: "9",
-      zero: "0",
-    };
+    const numberWords = [
+      "zero",
+      "one",
+      "two",
+      "three",
+      "four",
+      "five",
+      "six",
+      "seven",
+      "eight",
+      "nine",
+    ];
+
+    const expectedNumberAsWord = numberWords[parseInt(expectedNumber, 10)];
 
     // Normalize the spoken input
     const normalizedSpokenInput = prevSpokenInput
       .toLowerCase()
       .replace(/\s/g, "");
 
-    // Convert spoken input to numbers
-    const spokenInputAsNumber = spokenWordsToNumbers[normalizedSpokenInput];
+    console.log("Expected Answer:", expectedNumberAsWord);
 
-    // Normalize the expected number
-    const normalizedExpectedNumber = expectedNumber.toString().toLowerCase();
+    console.log(
+      "Test:",
+      normalizedSpokenInput.startsWith(expectedNumberAsWord)
+    );
 
     if (
-      spokenInputAsNumber === normalizedExpectedNumber ||
-      normalizedSpokenInput.includes(normalizedExpectedNumber)
+      normalizedSpokenInput === expectedNumberAsWord ||
+      // should match at all characters at first and then ignore the rest
+      normalizedSpokenInput.startsWith(expectedNumberAsWord)
     ) {
       setResult("Correct!");
+      addPointsToUser(100);
     } else {
       setResult("Incorrect!");
     }
@@ -235,8 +312,15 @@ const NumberLesson = () => {
 
   return (
     <div className="md:pr-14 pb-10 md:pb-0 w-full min-h-screen bg-white">
+      <div className="fixed top-4 right-4">
+        <div className="bg-[#FFD700] text-[#4A90E2] rounded-xl py-2 px-4 font-bold flex items-center gap-2">
+          <span>Points: </span>
+          <span>{currentUser?.data[0]?.points}</span>
+        </div>
+      </div>
+
       <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 h-screen">
-      {!drawingEnabled ? (
+        {!drawingEnabled ? (
           <Canvas style={{ width: "100%" }}>
             <CameraControls />
             <Suspense fallback={null}>
@@ -302,9 +386,9 @@ const NumberLesson = () => {
           >
             <TbAugmentedReality className="mr-2 text-xl" /> View
           </button>
-          <div>
+          {/* <div>
             Recognized Word: <strong>{recognizedWord}</strong>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -329,6 +413,18 @@ const NumberLesson = () => {
           />
         </div>
       )}
+
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };
