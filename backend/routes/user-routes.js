@@ -23,6 +23,10 @@ router.put("/change-password", verifyUser, userController.updatePassword);
 // Update user profile
 router.put("/edit-profile", verifyUser, userController.updateUserProfile);
 
+// Add points to user
+router.put("/add-points", verifyUser, userController.addPointsToUser);
+router.put("/subtract-points", verifyUser, userController.subtractPointsToUser);
+
 // Upload image
 router.post("/uploadImage", verifyUser, upload, userController.uploadImage);
 
@@ -41,5 +45,8 @@ router.post(
   "/password-recovery/reset-password/:token",
   passwordRecoveryController.resetPassword
 );
+
+// Route to set character name and/or avatar name
+router.put('/set-character-avatar', verifyUser, userController.setCharacterAndAvatar);
 
 module.exports = router;

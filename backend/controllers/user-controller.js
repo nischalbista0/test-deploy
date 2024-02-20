@@ -6,8 +6,7 @@ const ExchangeRequest = require("../models/ExchangeRequest");
 const registerUser = async (req, res, next) => {
   const { age, password, fullname, email } = req.body;
 
-  console.log(age)
-
+  console.log(age);
 
   try {
     // Check for empty fields
@@ -173,6 +172,64 @@ const getUserProfile = async (req, res, next) => {
   }
 };
 
+const addPointsToUser = async (req, res) => {
+  const userId = req.user.id;
+  const { points } = req.body;
+
+  console.log(userId);
+  console.log(points);
+  console.log(req.body);
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Add points to the user
+    user.points += points;
+
+    // Save the updated user
+    await user.save();
+
+    console.log(user);
+
+    return res.status(200).json({ message: "Points added successfully", user });
+  } catch (error) {
+    console.error("Error adding points to user:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const subtractPointsToUser = async (req, res) => {
+  const userId = req.user.id;
+  const { points } = req.body;
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Add points to the user
+    user.points -= points;
+
+    // Save the updated user
+    await user.save();
+
+    console.log(user);
+
+    return res.status(200).json({ message: "Points used!", user });
+  } catch (error) {
+    console.error("Error using points to user:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const getUserInfoById = async (req, res, next) => {
   const userId = req.params.user_id;
 
@@ -272,7 +329,7 @@ const updateUserProfile = async (req, res, next) => {
     if (fullname && fullname !== "" && fullname !== user.fullname) {
       user.fullname = fullname;
     }
-    if (age !== undefined ) {
+    if (age !== undefined) {
       user.age = age;
     }
     if (email && email !== "" && email !== user.email) {
@@ -349,6 +406,40 @@ const uploadImage = (req, res, next) => {
     });
 };
 
+// Controller function to set character name and/or avatar name
+const setCharacterAndAvatar = async (req, res) => {
+  try {
+    const { characterName, avatar } = req.body;
+    const userId = req.user.id;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update character name if provided
+    if (characterName) {
+      user.characterName = characterName;
+    }
+
+    // Update avatar if provided
+    if (avatar) {
+      user.avatar = avatar;
+    }
+
+    // Save the updated user
+    await user.save();
+
+    res.status(200).json({ message: 'Character name and/or avatar name updated successfully' });
+  } catch (error) {
+    console.error('Error setting character name and/or avatar name:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
 module.exports = {
   registerUser,
   loginUser,
@@ -358,4 +449,7 @@ module.exports = {
   updatePassword,
   getAllExchangeRequests,
   uploadImage,
+  addPointsToUser,
+  subtractPointsToUser,
+  setCharacterAndAvatar,
 };
