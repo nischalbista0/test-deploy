@@ -7,7 +7,7 @@ const XrCubeContainer = () => {
   const { id } = useParams();
   return (
     <>
-      <ARButton />
+      <ARButton className="bg-orange-500 relative cursor-pointer pointer-events-auto rounded-lg px-3 py-1.5 z-20 text-white font-medium" />
       <Canvas>
         <XR>
           <Model value={id} />

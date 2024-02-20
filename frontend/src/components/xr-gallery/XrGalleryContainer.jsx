@@ -21,7 +21,7 @@ const XrGalleryContainer = () => {
   const [requiredPoints, setRequiredPoints] = useState(200); // Example: Set the required points
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
 
-  const userPoints = currentUser?.data[0]?.points;
+  const userPoints = 2000;
 
   let interfaceRef = useCallback((node) => {
     if (node !== null) {
@@ -54,7 +54,7 @@ const XrGalleryContainer = () => {
     // Update user points (You need to implement this part)
     console.log(`Character unlocked! Remaining points: ${newPoints}`);
     // Update state to indicate character is unlocked
-    subtractPointsToUser(requiredPoints);
+    // subtractPointsToUser(requiredPoints);
     toast.success(`Character unlocked! Remaining points: ${newPoints}`);
 
     setIsCharacterUnlocked(true);
